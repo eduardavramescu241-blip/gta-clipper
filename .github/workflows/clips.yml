@@ -103,4 +103,4 @@ jobs:
           git add state/
           if git diff --cached --quiet; then echo "No progress to save."; exit 0; fi
           git commit -m "Save clipping progress"
-          git push
+          git pull --rebase -q origin main && git push

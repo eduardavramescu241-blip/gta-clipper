@@ -89,7 +89,11 @@ def main():
     titles = read_json(STATE / "titles.json", {})
     summary, limit_hit = [], False
     clipper_tails = []
-    env = dict(os.environ, GTA6CLIP_HOME=str(HOME6), PYTHONUTF8="1")
+    # The clipper calls yt-dlp from its own environment, so put that environment first on PATH
+    # (on the laptop, launch.py does this).
+    env = dict(os.environ, GTA6CLIP_HOME=str(HOME6), PYTHONUTF8="1",
+               PATH=str(VENV_PY.parent) + os.pathsep + os.environ.get("PATH", ""),
+               VIRTUAL_ENV=str(VENV_PY.parent.parent))
 
     for s in cfg_all.get("streamers", []):
         name, login = s["name"], s["login"]
