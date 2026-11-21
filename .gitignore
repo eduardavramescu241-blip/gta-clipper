@@ -1,0 +1,6 @@
+out/
+review/
+work-home/
+__pycache__/
+*.pyc
+graphify-out/

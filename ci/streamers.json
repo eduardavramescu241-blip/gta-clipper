@@ -1,0 +1,9 @@
+{
+  "clips_per_run": 5,
+  "max_new_hours": 6,
+  "max_age_hours": 72,
+  "streamers": [
+    {"login": "lacy",     "name": "LACY",      "tags": ["#LACY"],     "game_max_x": 0.70},
+    {"login": "kaicenat", "name": "KAI CENAT", "tags": ["#KAICENAT"], "game_max_x": null}
+  ]
+}

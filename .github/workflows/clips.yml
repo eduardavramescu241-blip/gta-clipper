@@ -1,0 +1,106 @@
+name: GTA clips
+
+on:
+  schedule:
+    - cron: "17 */3 * * *"      # every 3 hours (UTC)
+  workflow_dispatch:             # "Run workflow" button for a run right now
+
+permissions:
+  contents: write                # to save state/ (progress and past titles) back to the repo
+
+concurrency:
+  group: gta-clips
+  cancel-in-progress: false
+
+jobs:
+  clips:
+    runs-on: ubuntu-latest
+    timeout-minutes: 345
+    env:
+      GTA6CLIP_HOME: ${{ github.workspace }}/work-home
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check secrets
+        env:
+          HAS_DRIVE: ${{ secrets.RCLONE_CONFIG != '' }}
+        run: |
+          if [ -z "$CLAUDE_CODE_OAUTH_TOKEN" ]; then
+            echo "::error::Secret CLAUDE_CODE_OAUTH_TOKEN is missing (run 'claude setup-token' on your laptop and add it in Settings > Secrets and variables > Actions)."
+            exit 1
+          fi
+          echo "Google Drive upload configured: $HAS_DRIVE"
+
+      - name: Install system tools and fonts
+        run: |
+          echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | sudo debconf-set-selections
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg tesseract-ocr ttf-mscorefonts-installer fonts-dejavu-core fonts-noto-color-emoji rclone > /dev/null
+          fc-cache -f > /dev/null
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Claude Code
+        run: |
+          npm install -g @anthropic-ai/claude-code > /dev/null
+          echo '{"hasCompletedOnboarding": true}' > ~/.claude.json
+          claude --version
+
+      - name: Cache clipper environment (Python packages, Whisper models, face finder)
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gta6-clipper
+            ~/.cache/huggingface
+          key: clipper-env-${{ hashFiles('gta6-clipper/scripts/setup.py') }}
+
+      - name: Set up the clipper
+        run: python gta6-clipper/scripts/setup.py
+
+      - name: Make new clips
+        run: python ci/run_streamers.py
+
+      - name: Check the clips
+        if: always()
+        run: |
+          if ls out/*/*/*.mp4 > /dev/null 2>&1; then python ci/review.py; else echo "No new clips to check."; mkdir -p review; cp out/RUN_SUMMARY.txt review/REPORT.md 2>/dev/null || true; fi
+
+      - name: Upload to Google Drive
+        if: always()
+        env:
+          RCLONE_CONFIG_TEXT: ${{ secrets.RCLONE_CONFIG }}
+        run: |
+          if [ -z "$RCLONE_CONFIG_TEXT" ] || ! ls review/Ready/*.mp4 review/Rejected/*.mp4 > /dev/null 2>&1; then
+            echo "Nothing uploaded to Drive (no clips, or the RCLONE_CONFIG secret is not set)."; exit 0
+          fi
+          mkdir -p ~/.config/rclone
+          printf '%s\n' "$RCLONE_CONFIG_TEXT" > ~/.config/rclone/rclone.conf
+          STAMP=$(TZ=Europe/Warsaw date +%Y-%m-%d_%H-%M)
+          rclone copy review "gdrive:GTA-Clips/$STAMP" --exclude "_*/**" --transfers 4
+          echo "Uploaded to Google Drive: GTA-Clips/$STAMP"
+
+      - name: Keep the clips here too if Drive is not set up (7 days)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: clips-${{ github.run_number }}
+          path: review/
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Save progress
+        if: always()
+        run: |
+          git config user.name "gta-clips-bot"
+          git config user.email "gta-clips-bot@users.noreply.github.com"
+          git add state/
+          if git diff --cached --quiet; then echo "No progress to save."; exit 0; fi
+          git commit -m "Save clipping progress"
+          git push
