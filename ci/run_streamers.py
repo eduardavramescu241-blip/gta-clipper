@@ -37,9 +37,22 @@ def write_json(path, data):
     Path(path).write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
+ERRORS = []
+
+
 def ytdlp(*args, timeout=120):
-    proc = subprocess.run([str(VENV_PY), "-m", "yt_dlp", *args], capture_output=True, text=True,
-                          timeout=timeout)
+    if not VENV_PY.exists():
+        ERRORS.append(f"clipper environment missing ({VENV_PY}): setup failed")
+        return ""
+    try:
+        proc = subprocess.run([str(VENV_PY), "-m", "yt_dlp", *args], capture_output=True, text=True,
+                              timeout=timeout)
+    except subprocess.TimeoutExpired:
+        ERRORS.append("yt-dlp timed out: " + " ".join(args)[-120:])
+        return ""
+    for line in proc.stderr.splitlines():
+        if "ERROR" in line or "WARNING" in line:
+            ERRORS.append(line.strip()[:300])
     return proc.stdout + proc.stderr
 
 
@@ -75,6 +88,7 @@ def main():
     shutil.copyfile(STATE / "progress.json", HOME6 / "progress.json")
     titles = read_json(STATE / "titles.json", {})
     summary, limit_hit = [], False
+    clipper_tails = []
     env = dict(os.environ, GTA6CLIP_HOME=str(HOME6), PYTHONUTF8="1")
 
     for s in cfg_all.get("streamers", []):
@@ -83,7 +97,7 @@ def main():
         live = is_live(login)
         found = newest_gta_vod(login)
         if not found:
-            summary.append(f"{name}: no GTA broadcast among the 5 newest")
+            summary.append(f"{name}: no GTA broadcast found among the 5 newest (live: {live})")
             continue
         url, title, ts = found
         age_h = (time.time() - ts) / 3600
@@ -108,6 +122,7 @@ def main():
                               capture_output=True, text=True, env=env, stdin=subprocess.DEVNULL)
         out = proc.stdout + proc.stderr
         print(out[-6000:], flush=True)
+        clipper_tails.append((name, [l for l in out.splitlines() if l.strip()][-20:]))
 
         made = 0
         for day in HOME6.glob("20??-??-??"):
@@ -133,6 +148,18 @@ def main():
         titles[k] = [t for t in titles[k] if t][-200:]
     write_json(STATE / "titles.json", titles)
     (OUT / "RUN_SUMMARY.txt").write_text("\n".join(summary) + "\n", encoding="utf-8")
+    report = [f"# Last run: {time.strftime('%Y-%m-%d %H:%M UTC', time.gmtime())}", "", "## Result", ""]
+    report += [f"- {line}" for line in summary] or ["- nothing to report"]
+    errs = list(dict.fromkeys(ERRORS))
+    if errs:
+        report += ["", "## Errors and warnings", ""] + [f"- `{e}`" for e in errs[:30]]
+    setup_log = ROOT / "setup_log.txt"
+    if setup_log.exists():
+        tail = setup_log.read_text(encoding="utf-8", errors="replace").splitlines()[-25:]
+        report += ["", "## Clipper setup (last lines)", "", "```", *tail, "```"]
+    for name, text in clipper_tails:
+        report += ["", f"## {name}: clipper output (last lines)", "", "```", *text, "```"]
+    (STATE / "last_run.md").write_text("\n".join(report) + "\n", encoding="utf-8")
     log("\n" + "\n".join(summary))
     return 0 if not limit_hit else 0
 

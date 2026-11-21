@@ -4,3 +4,4 @@ work-home/
 __pycache__/
 *.pyc
 graphify-out/
+setup_log.txt
