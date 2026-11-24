@@ -1,9 +1,9 @@
-# Last run: 2026-11-23 12:48 UTC
+# Last run: 2026-11-24 02:15 UTC
 
 ## Result
 
 - LACY: 0 new clip(s)
-- KAI CENAT: 0 new clip(s)
+- KAI CENAT: no GTA broadcast found among the 5 newest (live: False)
 
 ## Errors and warnings
 
@@ -13,34 +13,20 @@
 ## LACY: clipper output (last lines)
 
 ```
-[33m![0m [07:59]   part 195-207 min skipped: claude -p failed: Failed to authenticate. API Error: 401 Invalid bearer token
-[33m![0m [07:59]   part 207-219 min skipped: claude -p failed: Failed to authenticate. API Error: 401 Invalid bearer token
-[33m![0m [07:59]   part 231-243 min skipped: claude -p failed: Failed to authenticate. API Error: 401 Invalid bearer token
-[33m![0m [07:59]   part 219-231 min skipped: claude -p failed: Failed to authenticate. API Error: 401 Invalid bearer token
-[33m![0m [08:02]   part 255-267 min skipped: claude -p failed: Failed to authenticate. API Error: 401 Invalid bearer token
-[33m![0m [08:02]   part 243-255 min skipped: claude -p failed: Failed to authenticate. API Error: 401 Invalid bearer token
-[33m![0m [08:02]   part 267-279 min skipped: claude -p failed: Failed to authenticate. API Error: 401 Invalid bearer token
-[33m![0m [08:03]   part 279-291 min skipped: claude -p failed: Failed to authenticate. API Error: 401 Invalid bearer token
-[33m![0m [08:05]   part 291-303 min skipped: claude -p failed: Failed to authenticate. API Error: 401 Invalid bearer token
-[33m![0m [08:05]   part 303-315 min skipped: claude -p failed: Failed to authenticate. API Error: 401 Invalid bearer token
-[33m![0m [08:05]   part 315-327 min skipped: claude -p failed: Failed to authenticate. API Error: 401 Invalid bearer token
-[33m![0m [08:05]   part 327-339 min skipped: claude -p failed: Failed to authenticate. API Error: 401 Invalid bearer token
-[33m![0m [08:07]   part 339-351 min skipped: claude -p failed: Failed to authenticate. API Error: 401 Invalid bearer token
-[33m![0m [08:08]   part 351-360 min skipped: claude -p failed: Failed to authenticate. API Error: 401 Invalid bearer token
-[33m![0m [08:08] [1mLacy[0m Claude found nothing strong enough to clip in this stream: moving on, next run starts at 6:00:00
-[32m✓[0m [08:08] done: 0 clip(s) from 1 stream(s)
+[35m▸[0m [00:01] [1mLacy[0m downloading the stream's audio (video comes later, only for the clips)...
+[32m✓[0m [00:59] [1mLacy[0m audio: 459 MB
+[32m✓[0m [00:59] [1mLacy[0m 🌴️ GTA 6 MARATHON 🍹 THE FINALE 🦩️ BEATING IT RIGHT NOW 🍹️ GIVEAWAYS 🌴️  ·  6 h 21 min of stream, clipping 6:00:00-6:21:41
+[35m▸[0m [00:59] [1mLacy[0m listening to 22 min of stream in 2 block(s)...
+[35m▸[0m [01:01] [1mLacy[0m loading Whisper 'tiny' (the first run downloads it)...
+[36m·[0m [01:24] [1mLacy[0m   20/22 min heard
+[36m·[0m [01:26] [1mLacy[0m   22/22 min heard
+[35m▸[0m [01:45] [1mLacy[0m Claude is reading 2 part(s) of the stream, 4 at a time...
+[33m![0m [01:47]   part 360-372 min skipped: claude -p failed: Failed to authenticate. API Error: 401 Invalid bearer token
+[33m![0m [01:48]   part 372-382 min skipped: claude -p failed: Failed to authenticate. API Error: 401 Invalid bearer token
+[33m![0m [01:48] [1mLacy[0m Claude found nothing strong enough to clip in this stream: moving on, next run starts at 6:21:41
+[32m✓[0m [01:48] done: 0 clip(s) from 1 stream(s)
   Lacy · 🌴️ GTA 6 MARATHON 🍹 THE FINALE 🦩️ BEATING IT RIGHT NOW 🍹️ GI
   Claude found nothing strong enough to clip in this stream
   (no clips)
-[0;93m2026-11-23 12:40:59.192580174 [W:onnxruntime:Default, device_discovery.cc:95 GetPciBusId] Skipping pci_bus_id for PCI path at "/sys/devices/LNXSYSTM:00/LNXSYBUS:00/ACPI0004:00/MSFT1000:00/5620e0c7-8062-4dce-aeb7-520c7ef76171" because filename "5620e0c7-8062-4dce-aeb7-520c7ef76171" did not match expected pattern of [0-9a-f]+:[0-9a-f]+:[0-9a-f]+[.][0-9a-f]+[m
-```
-
-## KAI CENAT: clipper output (last lines)
-
-```
-[32m✓[0m [00:00] [1mKaiCenat[0m no new footage since the last run (broadcast has ended): skipping
-[32m✓[0m [00:00] done: 0 clip(s) from 1 stream(s)
-  KaiCenat · 🗺️EXPLORING GTA 6🗺️
-  no new footage yet
-  (nothing new)
+[0;93m2026-11-24 02:14:36.530067549 [W:onnxruntime:Default, device_discovery.cc:95 GetPciBusId] Skipping pci_bus_id for PCI path at "/sys/devices/LNXSYSTM:00/LNXSYBUS:00/ACPI0004:00/MSFT1000:00/5620e0c7-8062-4dce-aeb7-520c7ef76171" because filename "5620e0c7-8062-4dce-aeb7-520c7ef76171" did not match expected pattern of [0-9a-f]+:[0-9a-f]+:[0-9a-f]+[.][0-9a-f]+[m
 ```
