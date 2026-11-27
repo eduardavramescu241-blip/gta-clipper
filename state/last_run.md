@@ -1,13 +1,13 @@
-# Last run: 2026-11-27 01:44 UTC
+# Last run: 2026-11-27 12:19 UTC
 
 ## Result
 
-- LACY: 0 new clip(s) (live)
+- LACY: 0 new clip(s)
 - KAI CENAT: 0 new clip(s)
 
 ## Errors and warnings
 
-- `WARNING: [twitch:vod] 2941601737: Unable to download JSON metadata: HTTP Error 403: Forbidden`
+- `ERROR: [twitch:stream] lacy: The channel is not currently live`
 - `ERROR: [twitch:stream] kaicenat: The channel is not currently live`
 
 ## LACY: clipper output (last lines)
